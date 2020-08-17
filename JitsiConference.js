@@ -923,13 +923,16 @@ JitsiConference.prototype.getTranscriptionStatus = function() {
 JitsiConference.prototype.addTrack = function(track) {
     logger.info('🔥 addtrack start');
     if (track.isVideoTrack()) {
+        logger.info('🔥 addTrack track.isVideoTrack');
         // Ensure there's exactly 1 local video track in the conference.
         const localVideoTrack = this.rtc.getLocalVideoTrack();
 
         if (localVideoTrack) {
+            logger.info('🔥 addTrack localVideoTrack');
             // Don't be excessively harsh and severe if the API client happens
             // to attempt to add the same local video track twice.
             if (track === localVideoTrack) {
+                logger.info('🔥 addTrack track===localVideoTrack');
                 return Promise.resolve(track);
             }
 
@@ -938,7 +941,7 @@ JitsiConference.prototype.addTrack = function(track) {
 
         }
     }
-
+    logger.info('🔥 addTrack end');
     return this.replaceTrack(null, track);
 };
 
@@ -993,6 +996,8 @@ JitsiConference.prototype._fireMuteChangeEvent = function(track) {
  * @param track the JitsiLocalTrack object.
  */
 JitsiConference.prototype.onLocalTrackRemoved = function(track) {
+    logger.info('🔥 onLocalTrackRemoved start');
+
     track._setConference(null);
     this.rtc.removeLocalTrack(track);
     track.removeEventListener(JitsiTrackEvents.TRACK_MUTE_CHANGED,
@@ -1004,10 +1009,16 @@ JitsiConference.prototype.onLocalTrackRemoved = function(track) {
     // FIXME: we assume we have only one screen sharing track
     // if we change this we need to fix this check
     if (track.isVideoTrack() && track.videoType === VideoType.DESKTOP) {
+    logger.info('🔥 onLocalTrackRemoved desktop video track');
         this.statistics.sendScreenSharingEvent(false);
     }
 
+    logger.info('🔥 onLocalTrackRemoved TRACK_REMOVED emitted');
+
     this.eventEmitter.emit(JitsiConferenceEvents.TRACK_REMOVED, track);
+
+    logger.info('🔥 onLocalTrackRemoved end');
+
 };
 
 /**
@@ -1030,31 +1041,45 @@ JitsiConference.prototype.removeTrack = function(track) {
  * @returns {Promise} resolves when the replacement is finished
  */
 JitsiConference.prototype.replaceTrack = function(oldTrack, newTrack) {
+    logger.info('🔥 replaceTrack start');
+
     // First do the removal of the oldTrack at the JitsiConference level
     if (oldTrack) {
+    logger.info('🔥 replaceTrack if oldTrack');
+
         if (oldTrack.disposed) {
+            logger.info('🔥 replaceTrack if oldTrack.disposed');
             return Promise.reject(
                 new JitsiTrackError(JitsiTrackErrors.TRACK_IS_DISPOSED));
         }
     }
     if (newTrack) {
-        if (newTrack.disposed) {
+            logger.info('🔥 replaceTrack if newtrack');
+            if (newTrack.disposed) {
+            logger.info('🔥 replaceTrack if newtrack.disposed');
             return Promise.reject(
                 new JitsiTrackError(JitsiTrackErrors.TRACK_IS_DISPOSED));
         }
     }
 
+    logger.info('🔥 replaceTrack end');
     // Now replace the stream at the lower levels
     return this._doReplaceTrack(oldTrack, newTrack)
         .then(() => {
+            logger.info('🔥 replaceTrack _doReplaceTrack start');
             if (oldTrack) {
+            logger.info('🔥 replaceTrack _doReplaceTrack if oldtrack');
+
                 this.onLocalTrackRemoved(oldTrack);
             }
             if (newTrack) {
+            logger.info('🔥 replaceTrack _doReplaceTrack if newtrack');
+
                 // Now handle the addition of the newTrack at the
                 // JitsiConference level
                 this._setupNewTrack(newTrack);
             }
+            logger.info('🔥 replaceTrack _doReplaceTrack end');
 
             return Promise.resolve();
         }, error => Promise.reject(new Error(error)));
@@ -1073,21 +1098,33 @@ JitsiConference.prototype.replaceTrack = function(oldTrack, newTrack) {
  * @private
  */
 JitsiConference.prototype._doReplaceTrack = function(oldTrack, newTrack) {
+    logger.info('🔥 _doReplaceTrack start');
+
     const replaceTrackPromises = [];
 
     if (this.jvbJingleSession) {
+    logger.info('🔥 _doReplaceTrack if this.jvbJingleSession');
+
         replaceTrackPromises.push(
             this.jvbJingleSession.replaceTrack(oldTrack, newTrack));
     } else {
+    logger.info('🔥 _doReplaceTrack if not this.jvbJingleSession');
+
         logger.info('_doReplaceTrack - no JVB JingleSession');
     }
 
     if (this.p2pJingleSession) {
+    logger.info('🔥 _doReplaceTrack if this.p2pJingleSession');
+
         replaceTrackPromises.push(
             this.p2pJingleSession.replaceTrack(oldTrack, newTrack));
     } else {
-        logger.info('_doReplaceTrack - no P2P JingleSession');
+    logger.info('🔥 _doReplaceTrack if not this.p2pJingleSession');
+    logger.info('_doReplaceTrack - no P2P JingleSession');
     }
+
+    logger.info('🔥 _doReplaceTrack end');
+
 
     return Promise.all(replaceTrackPromises);
 };
@@ -1097,8 +1134,11 @@ JitsiConference.prototype._doReplaceTrack = function(oldTrack, newTrack) {
  * @param {JitsiLocalTrack} newTrack the new track being created
  */
 JitsiConference.prototype._setupNewTrack = function(newTrack) {
+    logger.info("🔥 _setupNewTrack start");
     if (newTrack.isAudioTrack() || (newTrack.isVideoTrack()
             && newTrack.videoType !== VideoType.DESKTOP)) {
+    logger.info("🔥 _setupNewTrack audio or video track and video is not desktop");
+
         // Report active device to statistics
         const devices = RTC.getCurrentlyAvailableMediaDevices();
         const device
@@ -1108,11 +1148,15 @@ JitsiConference.prototype._setupNewTrack = function(newTrack) {
                         && d.label === newTrack.getTrack().label);
 
         if (device) {
+    logger.info("🔥 _setupNewTrack audio or video track and video is not desktop and device found");
+
             Statistics.sendActiveDeviceListEvent(
                 RTC.getEventDataForActiveDevice(device));
         }
     }
     if (newTrack.isVideoTrack()) {
+    logger.info("🔥 _setupNewTrack new track is video track");
+
         this.removeCommand('videoType');
         this.sendCommand('videoType', {
             value: newTrack.videoType,
@@ -1125,8 +1169,12 @@ JitsiConference.prototype._setupNewTrack = function(newTrack) {
 
     // ensure that we're sharing proper "is muted" state
     if (newTrack.isAudioTrack()) {
+    logger.info("🔥 _setupNewTrack new track is audio track");
+
         this.room.setAudioMute(newTrack.isMuted());
     } else {
+    logger.info("🔥 _setupNewTrack new track is not audio track");
+
         this.room.setVideoMute(newTrack.isMuted());
     }
 
@@ -1141,7 +1189,10 @@ JitsiConference.prototype._setupNewTrack = function(newTrack) {
 
     newTrack._setConference(this);
 
+    logger.info("🔥 _setupNewTrack TRACK_ADDED emitted");
     this.eventEmitter.emit(JitsiConferenceEvents.TRACK_ADDED, newTrack);
+    logger.info("🔥 _setupNewTrack end");
+
 };
 
 /**
