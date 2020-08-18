@@ -1,3 +1,7 @@
+/* global __filename */
+
+import Logger from "jitsi-meet-logger";
+
 import JitsiConference from './JitsiConference';
 import * as JitsiConnectionEvents from './JitsiConnectionEvents';
 import Statistics from './modules/statistics/statistics';
@@ -6,6 +10,8 @@ import {
     CONNECTION_DISCONNECTED as ANALYTICS_CONNECTION_DISCONNECTED,
     createConnectionFailedEvent
 } from './service/statistics/AnalyticsEvents';
+
+const logger = Logger.getLogger(__filename);
 
 /**
  * Creates a new connection object for the Jitsi Meet server side video
@@ -18,10 +24,13 @@ import {
  * @constructor
  */
 export default function JitsiConnection(appID, token, options) {
+    logger.info("🔥 JitsiConnection start")
+
     this.appID = appID;
     this.token = token;
     this.options = options;
     this.xmpp = new XMPP(options, token);
+    logger.info("🔥 JitsiConnection this.xmpp:",this.xmpp)
 
     /* eslint-disable max-params */
     this.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED,
@@ -50,6 +59,7 @@ export default function JitsiConnection(appID, token, options) {
                         msg
                     }));
         });
+    logger.info("🔥 JitsiConnection end")
 }
 
 /**
@@ -58,7 +68,9 @@ export default function JitsiConnection(appID, token, options) {
  * (for example authentications parameters).
  */
 JitsiConnection.prototype.connect = function(options = {}) {
+    logger.info("🔥 JitsiConnection.connect start")
     this.xmpp.connect(options.id, options.password);
+    logger.info("🔥 JitsiConnection.connect end")
 };
 
 /**

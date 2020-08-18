@@ -113,7 +113,9 @@ const JINGLE_SI_TIMEOUT = 5000;
  *       and so on...
  */
 export default function JitsiConference(options) {
+    logger.info("🔥 JitsiConnection.initJitsiConference start")
     if (!options.name || options.name.toLowerCase() !== options.name) {
+        logger.info("🔥 JitsiConnection.initJitsiConference name invalid")
         const errmsg
             = 'Invalid conference name (no conference name passed or it '
                 + 'contains invalid characters like capital letters)!';
@@ -231,9 +233,11 @@ export default function JitsiConference(options) {
      */
     this.p2pJingleSession = null;
 
+    logger.info("🔥 JitsiConnection.initJitsiConference this.room:",this.room);
     this.videoSIPGWHandler = new VideoSIPGW(this.room);
     this.recordingManager = new RecordingManager(this.room);
     this._conferenceJoinAnalyticsEventSent = false;
+    logger.info("🔥 JitsiConnection.initJitsiConference end");
 }
 
 // FIXME convert JitsiConference to ES6 - ASAP !
@@ -282,9 +286,11 @@ JitsiConference.resourceCreator = function(jid, isAuthenticatedUser) {
  * @param options.connection {JitsiConnection} overrides this.connection
  */
 JitsiConference.prototype._init = function(options = {}) {
+    logger.info("🔥 JitsiConnection.initJitsiConference _init start")
     // Override connection and xmpp properties (Useful if the connection
     // reloaded)
     if (options.connection) {
+        logger.info("🔥 JitsiConnection.initJitsiConference _init if connection")
         this.connection = options.connection;
         this.xmpp = this.connection.xmpp;
 
@@ -295,6 +301,7 @@ JitsiConference.prototype._init = function(options = {}) {
     const { config } = this.options;
 
     this._statsCurrentId = config.statisticsId ? config.statisticsId : Settings.callStatsUserName;
+    logger.info("🔥 JitsiConnection.initJitsiConference _init xmpp.createRoom")
     this.room = this.xmpp.createRoom(
         this.options.name, {
             ...config,
@@ -330,14 +337,16 @@ JitsiConference.prototype._init = function(options = {}) {
         config,
         (message, to) => {
             try {
+                logger.info("🔥 JitsiConnection.initJitsiConference _init e2eping")
                 this.sendMessage(
                     message, to, true /* sendThroughVideobridge */);
             } catch (error) {
-                logger.warn('Failed to send E2E ping request or response.', error && error.msg);
+                logger.warn('Failed to send E2E ping request or response.', error);
             }
         });
 
     if (!this.rtc) {
+        logger.info("🔥 JitsiConnection.initJitsiConference _init if no this.rtc")
         this.rtc = new RTC(this, options);
         this.eventManager.setupRTCListeners();
     }
@@ -460,6 +469,8 @@ JitsiConference.prototype._init = function(options = {}) {
         this.setLocalParticipantProperty(
             'region', config.deploymentInfo.userRegion);
     }
+
+    logger.info("🔥 JitsiConnection.initJitsiConference _init end")
 };
 
 /**

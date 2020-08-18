@@ -396,7 +396,7 @@ export default class XMPP extends Listenable {
         //  Status.DISCONNECTED - The connection has been terminated
         //  Status.DISCONNECTING - The connection is currently being terminated
         //  Status.ATTACHED - The connection has been attached
-
+        logger.info("🔥 JitsiConnection.connect xmpp _connect start");
         this._resetState();
         this.connection.connect(
             jid,
@@ -405,6 +405,7 @@ export default class XMPP extends Listenable {
                 jid,
                 password
             }));
+        logger.info("🔥 JitsiConnection.connect xmpp _connect end");
     }
 
     /**
@@ -444,6 +445,7 @@ export default class XMPP extends Listenable {
      * @param password
      */
     connect(jid, password) {
+        logger.info("🔥 JitsiConnection.connect xmpp connect start");
         if (!jid) {
             const { anonymousdomain, domain } = this.options.hosts;
             let configDomain = anonymousdomain || domain;
@@ -470,6 +472,7 @@ export default class XMPP extends Listenable {
             jid = configDomain || (location && location.hostname);
         }
 
+        logger.info("🔥 JitsiConnection.connect xmpp connect end");
         return this._connect(jid, password);
     }
 
