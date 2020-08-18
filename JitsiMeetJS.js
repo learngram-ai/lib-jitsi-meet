@@ -167,7 +167,7 @@ export default _mergeNamespaceAndModule({
     mediaDevices: JitsiMediaDevices,
     analytics: Statistics.analytics,
     init(options = {}) {
-        logger.info("jitsimeetjs init started");
+        logger.info("🔥 jitsimeetjs init started");
         Statistics.init(options);
 
         // Initialize global window.connectionTimes
@@ -183,7 +183,7 @@ export default _mergeNamespaceAndModule({
 
         if (options.enableWindowOnErrorHandler) {
             logger.info(
-                "jitsimeetjs init if options.enableWindowOnErrorHandler"
+                "🔥 jitsimeetjs init if options.enableWindowOnErrorHandler"
             );
             GlobalOnErrorHandler.addHandler(
                 this.getGlobalOnErrorHandler.bind(this)
@@ -209,7 +209,7 @@ export default _mergeNamespaceAndModule({
 
         if (this.version) {
             logger.info(
-                "jitsimeetjs init if this.version, this.version:",
+                "🔥 jitsimeetjs init if this.version, this.version:",
                 this.version
             );
             const logObject = {
@@ -221,7 +221,7 @@ export default _mergeNamespaceAndModule({
             Statistics.sendLog(JSON.stringify(logObject));
         }
 
-        logger.info("jitsimeetjs init end");
+        logger.info("🔥 jitsimeetjs init end");
 
         return RTC.init(options);
     },
