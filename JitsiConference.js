@@ -1980,17 +1980,17 @@ JitsiConference.prototype._acceptJvbIncomingCall = function(
         }));
 
     try {
-        console.log("🔥 jingleSession.initialize params",this.room, this.rtc, {
-            ...this.options.config,
-            enableInsertableStreams: Boolean(this._e2eEncryption)
-        })
+        console.log("🔥 jingleSession.initialize params this.room:", this.room)
+        console.log("🔥 jingleSession.initialize params this.rtc:", this.rtc)
+        console.log("🔥 jingleSession.initialize params this.options.config:", { ...this.options.config,enableInsertableStreams: Boolean(this._e2eEncryption)})
+
         jingleSession.initialize(this.room, this.rtc, {
             ...this.options.config,
             enableInsertableStreams: Boolean(this._e2eEncryption)
         });
         console.log("🔥 _acceptJvbIncomingCall jingleSession.initialized")
     } catch (error) {
-        console.log("🔥 _acceptJvbIncomingCall not jingleSession.initialized",error)
+        console.log("🔥 _acceptJvbIncomingCall not jingleSession.initialized",{error,stack:error.stack,name:error.name,message:error.message})
         GlobalOnErrorHandler.callErrorHandler(error);
     }
 
