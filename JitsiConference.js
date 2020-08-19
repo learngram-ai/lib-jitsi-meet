@@ -1980,6 +1980,10 @@ JitsiConference.prototype._acceptJvbIncomingCall = function(
         }));
 
     try {
+        console.log("🔥 jingleSession.initialize params",this.room, this.rtc, {
+            ...this.options.config,
+            enableInsertableStreams: Boolean(this._e2eEncryption)
+        })
         jingleSession.initialize(this.room, this.rtc, {
             ...this.options.config,
             enableInsertableStreams: Boolean(this._e2eEncryption)
