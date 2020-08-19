@@ -61,6 +61,7 @@ export default class JingleConnectionPlugin extends ConnectionPlugin {
      * @param iq
      */
     onJingle(iq) {
+        console.log("🔥 onJingle start")
         const sid = $(iq).find('jingle').attr('sid');
         const action = $(iq).find('jingle').attr('action');
         const fromJid = iq.getAttribute('from');
@@ -75,6 +76,7 @@ export default class JingleConnectionPlugin extends ConnectionPlugin {
         let sess = this.sessions[sid];
 
         if (action !== 'session-initiate') {
+            console.log("🔥 onJingle action !== session-initiate")
             if (!sess) {
                 ack.attrs({ type: 'error' });
                 ack.c('error', { type: 'cancel' })
@@ -133,6 +135,7 @@ export default class JingleConnectionPlugin extends ConnectionPlugin {
 
         switch (action) {
         case 'session-initiate': {
+            console.log("🔥 onJingle session-initiate")
             logger.log('(TIME) received session-initiate:\t', now);
             const startMuted = $(iq).find('jingle>startmuted');
 
@@ -243,7 +246,9 @@ export default class JingleConnectionPlugin extends ConnectionPlugin {
                 .up();
             break;
         }
+        console.log("🔥 onJingle this.connection.send(ack)")
         this.connection.send(ack);
+        console.log("🔥 onJingle end")
 
         return true;
     }

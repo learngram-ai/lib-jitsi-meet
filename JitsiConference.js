@@ -1865,22 +1865,26 @@ JitsiConference.prototype.onRemoteTrackRemoved = function(removedTrack) {
 JitsiConference.prototype._onIncomingCallP2P = function(
         jingleSession,
         jingleOffer) {
+    console.log("🔥 _onIncomingCallP2P start")
 
     let rejectReason;
 
     if (!browser.supportsP2P()) {
+        console.log("🔥 _onIncomingCallP2P !browser.supportsP2P()")
         rejectReason = {
             reason: 'unsupported-applications',
             reasonDescription: 'P2P not supported',
             errorMsg: 'This client does not support P2P connections'
         };
     } else if (!this.isP2PEnabled() && !this.isP2PTestModeEnabled()) {
+        console.log("🔥 _onIncomingCallP2P !this.isP2PEnabled() && !this.isP2PTestModeEnabled()")
         rejectReason = {
             reason: 'decline',
             reasonDescription: 'P2P disabled',
             errorMsg: 'P2P mode disabled in the configuration'
         };
     } else if (this.p2pJingleSession) {
+        console.log("🔥 _onIncomingCallP2P this.p2pJingleSession")
         // Reject incoming P2P call (already in progress)
         rejectReason = {
             reason: 'busy',
@@ -1888,6 +1892,7 @@ JitsiConference.prototype._onIncomingCallP2P = function(
             errorMsg: 'Duplicated P2P "session-initiate"'
         };
     } else if (!this._shouldBeInP2PMode()) {
+        console.log("🔥 _onIncomingCallP2P !this._shouldBeInP2PMode()")
         rejectReason = {
             reason: 'decline',
             reasonDescription: 'P2P requirements not met',
@@ -1897,8 +1902,10 @@ JitsiConference.prototype._onIncomingCallP2P = function(
     }
 
     if (rejectReason) {
+        console.log("🔥 _onIncomingCallP2P this._rejectIncomingCall")
         this._rejectIncomingCall(jingleSession, rejectReason);
     } else {
+        console.log("🔥 _onIncomingCallP2P this._acceptP2PIncomingCall")
         this._acceptP2PIncomingCall(jingleSession, jingleOffer);
     }
 };
@@ -1910,11 +1917,15 @@ JitsiConference.prototype.onIncomingCall = function(
         jingleSession,
         jingleOffer,
         now) {
+    console.log("🔥 onIncomingCall start");
     // Handle incoming P2P call
     if (jingleSession.isP2P) {
+        console.log("🔥 onIncomingCall is jingleSession.isP2P");
         this._onIncomingCallP2P(jingleSession, jingleOffer);
     } else {
+        console.log("🔥 onIncomingCall is not jingleSession.isP2P");
         if (!this.room.isFocus(jingleSession.remoteJid)) {
+            console.log("🔥 onIncomingCall is not this.room.isFocus(jingleSession.remoteJid))");
             const description = 'Rejecting session-initiate from non-focus.';
 
             this._rejectIncomingCall(
@@ -1928,6 +1939,7 @@ JitsiConference.prototype.onIncomingCall = function(
         }
         this._acceptJvbIncomingCall(jingleSession, jingleOffer, now);
     }
+    console.log("🔥 onIncomingCall end")
 };
 
 /**
@@ -1937,13 +1949,14 @@ JitsiConference.prototype._acceptJvbIncomingCall = function(
         jingleSession,
         jingleOffer,
         now) {
-
+    console.log("🔥 _acceptJvbIncomingCall start")
     // Accept incoming call
     this.jvbJingleSession = jingleSession;
     this.room.connectionTimes['session.initiate'] = now;
     this._sendConferenceJoinAnalyticsEvent();
 
     if (this.wasStopped) {
+        console.log("🔥 _acceptJvbIncomingCall if this.wasStopped")
         Statistics.sendAnalyticsAndLog(
             createJingleEvent(ACTION_JINGLE_RESTART, { p2p: false }));
     }
@@ -1953,6 +1966,7 @@ JitsiConference.prototype._acceptJvbIncomingCall = function(
             .find('>bridge-session[xmlns="http://jitsi.org/protocol/focus"]')
             .attr('region');
 
+    console.log("🔥 _acceptJvbIncomingCall JitsiConferenceEvents.SERVER_REGION_CHANGED event emitted")
     this.eventEmitter.emit(
         JitsiConferenceEvents.SERVER_REGION_CHANGED,
         serverRegion);
@@ -1970,7 +1984,9 @@ JitsiConference.prototype._acceptJvbIncomingCall = function(
             ...this.options.config,
             enableInsertableStreams: Boolean(this._e2eEncryption)
         });
+        console.log("🔥 _acceptJvbIncomingCall jingleSession.initialized")
     } catch (error) {
+        console.log("🔥 _acceptJvbIncomingCall not jingleSession.initialized",error)
         GlobalOnErrorHandler.callErrorHandler(error);
     }
 
@@ -1979,22 +1995,28 @@ JitsiConference.prototype._acceptJvbIncomingCall = function(
 
     // Add local tracks to the session
     const localTracks = this.getLocalTracks();
+    console.log("🔥 _acceptJvbIncomingCall localTracks length:",localTracks.length)
 
     try {
         jingleSession.acceptOffer(
             jingleOffer,
             () => {
+                console.log("🔥 _acceptJvbIncomingCall jingleSession.acceptOffer")
+
                 // If for any reason invite for the JVB session arrived after
                 // the P2P has been established already the media transfer needs
                 // to be turned off here.
                 if (this.isP2PActive() && this.jvbJingleSession) {
+                    console.log("🔥 _acceptJvbIncomingCall if this.isP2PActive() && this.jvbJingleSession")
                     this._suspendMediaTransferForJvbConnection();
                 }
 
+                console.log("🔥 _acceptJvbIncomingCall JitsiConferenceEvents._MEDIA_SESSION_STARTED event emitted")
                 this.eventEmitter.emit(
                     JitsiConferenceEvents._MEDIA_SESSION_STARTED,
                     jingleSession);
                 if (!this.isP2PActive()) {
+                    console.log("🔥 _acceptJvbIncomingCall JitsiConferenceEvents._MEDIA_SESSION_ACTIVE_CHANGED event emitted")
                     this.eventEmitter.emit(
                         JitsiConferenceEvents._MEDIA_SESSION_ACTIVE_CHANGED,
                         jingleSession);
@@ -2002,6 +2024,7 @@ JitsiConference.prototype._acceptJvbIncomingCall = function(
             },
             error => {
                 GlobalOnErrorHandler.callErrorHandler(error);
+                console.log("🔥 _acceptJvbIncomingCall Failed to accept incoming Jingle session")
                 logger.error(
                     'Failed to accept incoming Jingle session', error);
             },
@@ -2018,9 +2041,11 @@ JitsiConference.prototype._acceptJvbIncomingCall = function(
             'jitsi' /* Remote user ID for JVB is 'jitsi' */);
         this.statistics.startRemoteStats(this.jvbJingleSession.peerconnection);
     } catch (e) {
+        console.log("🔥 _acceptJvbIncomingCall error",e)
         GlobalOnErrorHandler.callErrorHandler(e);
         logger.error(e);
     }
+    console.log("🔥 _acceptJvbIncomingCall end")
 };
 
 /**
@@ -2033,6 +2058,8 @@ JitsiConference.prototype._acceptJvbIncomingCall = function(
  * to listen for new WebRTC Data Channels (in the 'datachannel' mode).
  */
 JitsiConference.prototype._setBridgeChannel = function(offerIq, pc) {
+    console.log("🔥 _setBridgeChannel start")
+
     let wsUrl = null;
     const webSocket
         = $(offerIq)
@@ -2058,9 +2085,12 @@ JitsiConference.prototype._setBridgeChannel = function(offerIq, pc) {
 
     if (bridgeChannelType === 'datachannel') {
         this.rtc.initializeBridgeChannel(pc, null);
+        console.log("🔥 _setBridgeChannel this.rtc.initializeBridgeChannel datachannel")
     } else if (bridgeChannelType === 'websocket' && wsUrl) {
         this.rtc.initializeBridgeChannel(null, wsUrl);
     }
+
+    console.log("🔥 _setBridgeChannel end")
 };
 
 /**
@@ -2699,12 +2729,14 @@ JitsiConference.prototype._onIceConnectionRestored = function(session) {
 JitsiConference.prototype._acceptP2PIncomingCall = function(
         jingleSession,
         jingleOffer) {
+    console.log("🔥 _acceptP2PIncomingCall start")
     this.isP2PConnectionInterrupted = false;
 
     // Accept the offer
     this.p2pJingleSession = jingleSession;
     this._sendConferenceJoinAnalyticsEvent();
 
+    console.log("🔥 _acceptP2PIncomingCall this.p2pJingleSession.initialize")
     this.p2pJingleSession.initialize(
         this.room,
         this.rtc, {
@@ -2727,21 +2759,29 @@ JitsiConference.prototype._acceptP2PIncomingCall = function(
         remoteID);
 
     const localTracks = this.getLocalTracks();
+    console.log("🔥 _acceptP2PIncomingCall localTracks.length:",localTracks.length)
+
 
     this.p2pJingleSession.acceptOffer(
         jingleOffer,
         () => {
             logger.debug('Got RESULT for P2P "session-accept"');
+            console.log("🔥 _acceptP2PIncomingCall this.p2pJingleSession.acceptOffer")
 
+            console.log("🔥 _acceptP2PIncomingCall JitsiConferenceEvents._MEDIA_SESSION_STARTED event emitted")
             this.eventEmitter.emit(
                 JitsiConferenceEvents._MEDIA_SESSION_STARTED,
                 this.p2pJingleSession);
         },
         error => {
+            console.log("🔥 _acceptP2PIncomingCall this.p2pJingleSession.acceptOffer error",error)
+
             logger.error(
                 'Failed to accept incoming P2P Jingle session', error);
         },
         localTracks);
+
+        console.log("🔥 _acceptP2PIncomingCall end")
 };
 
 /**
