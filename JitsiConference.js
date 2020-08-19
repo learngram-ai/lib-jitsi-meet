@@ -1110,31 +1110,36 @@ JitsiConference.prototype.replaceTrack = function(oldTrack, newTrack) {
  */
 JitsiConference.prototype._doReplaceTrack = function(oldTrack, newTrack) {
     logger.info('🔥 _doReplaceTrack start');
+    console.log('🔥 _doReplaceTrack start');
 
     const replaceTrackPromises = [];
 
     if (this.jvbJingleSession) {
     logger.info('🔥 _doReplaceTrack if this.jvbJingleSession');
+    console.log('🔥 _doReplaceTrack if this.jvbJingleSession');
 
         replaceTrackPromises.push(
             this.jvbJingleSession.replaceTrack(oldTrack, newTrack));
     } else {
-    logger.info('🔥 _doReplaceTrack if not this.jvbJingleSession');
-
+        logger.info('🔥 _doReplaceTrack if not this.jvbJingleSession');
+        console.log('🔥 _doReplaceTrack if not this.jvbJingleSession');
         logger.info('_doReplaceTrack - no JVB JingleSession');
     }
 
     if (this.p2pJingleSession) {
     logger.info('🔥 _doReplaceTrack if this.p2pJingleSession');
+    console.log('🔥 _doReplaceTrack if this.p2pJingleSession');
 
         replaceTrackPromises.push(
             this.p2pJingleSession.replaceTrack(oldTrack, newTrack));
     } else {
     logger.info('🔥 _doReplaceTrack if not this.p2pJingleSession');
+    console.log('🔥 _doReplaceTrack if not this.p2pJingleSession');
     logger.info('_doReplaceTrack - no P2P JingleSession');
     }
 
     logger.info('🔥 _doReplaceTrack end');
+    console.log('🔥 _doReplaceTrack end');
 
 
     return Promise.all(replaceTrackPromises);
