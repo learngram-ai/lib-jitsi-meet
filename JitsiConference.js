@@ -1991,7 +1991,7 @@ JitsiConference.prototype._acceptJvbIncomingCall = function(
         console.log("🔥 _acceptJvbIncomingCall jingleSession.initialized")
     } catch (error) {
         console.log("🔥 _acceptJvbIncomingCall not jingleSession.initialized",{error,stack:error.stack,name:error.name,message:error.message})
-        // GlobalOnErrorHandler.callErrorHandler(error);
+        GlobalOnErrorHandler.callErrorHandler(error);
     }
 
     // Open a channel with the videobridge.

@@ -333,6 +333,7 @@ export default class JingleSessionPC extends JingleSession {
         pcOptions.videoQuality = options.videoQuality;
 
         if (this.isP2P) {
+            console.log("🔥 JingleSessionPC doInitialize this.isP2P")
             // simulcast needs to be disabled for P2P (121) calls
             pcOptions.disableSimulcast = true;
             pcOptions.disableH264 = options.p2p && options.p2p.disableH264;
@@ -344,6 +345,7 @@ export default class JingleSessionPC extends JingleSession {
                 pcOptions.abtestSuspendVideo = abtestSuspendVideo;
             }
         } else {
+            console.log("🔥 JingleSessionPC doInitialize not this.isP2P")
             // H264 does not support simulcast, so it needs to be disabled.
             pcOptions.disableSimulcast
                 = options.disableSimulcast
@@ -370,12 +372,14 @@ export default class JingleSessionPC extends JingleSession {
             pcOptions.startSilent = true;
         }
 
+        console.log("🔥 JingleSessionPC doInitialize this.rtc.createPeerConnection start")
         this.peerconnection
             = this.rtc.createPeerConnection(
                     this.signalingLayer,
                     this.iceConfig,
                     this.isP2P,
                     pcOptions);
+        console.log("🔥 JingleSessionPC doInitialize this.rtc.createPeerConnection end")
 
         this.peerconnection.onicecandidate = ev => {
             if (!ev) {
