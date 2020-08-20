@@ -111,6 +111,7 @@ export default class JingleSession extends Listenable {
     initialize(room, rtc, options) {
         console.log("🔥 JingleSession initialize start")
         if (this.state !== null) {
+            console.log("🔥 JingleSession initialize this.state !== null")
             const errmsg
                 = `attempt to initiate on session ${this.sid}
                    in state ${this.state}`;
@@ -118,9 +119,13 @@ export default class JingleSession extends Listenable {
             logger.error(errmsg);
             throw new Error(errmsg);
         }
+        console.log("🔥 JingleSession initialize this.room = room")
         this.room = room;
+        console.log("🔥 JingleSession initialize this.rtc = rtc")
         this.rtc = rtc;
+        console.log("🔥 JingleSession initialize this.state = JingleSessionState.PENDING")
         this.state = JingleSessionState.PENDING;
+        console.log("🔥 JingleSession initialize end")
         this.doInitialize(options);
     }
 
