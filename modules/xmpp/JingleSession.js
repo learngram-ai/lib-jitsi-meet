@@ -63,22 +63,22 @@ export default class JingleSession extends Listenable {
          */
         this.dripContainer = [];
 
-        // /**
-        //  * The chat room instance associated with the session.
-        //  * @type {ChatRoom}
-        //  */
+        /**
+         * The chat room instance associated with the session.
+         * @type {ChatRoom}
+         */
         this.room = null;
 
-        // /**
-        //  * Jingle session state - uninitialized until {@link initialize} is
-        //  * called @type {JingleSessionState}
-        //  */
+        /**
+         * Jingle session state - uninitialized until {@link initialize} is
+         * called @type {JingleSessionState}
+         */
         this.state = null;
 
-        // /**
-        //  * The RTC service instance
-        //  * @type {RTC}
-        //  */
+        /**
+         * The RTC service instance
+         * @type {RTC}
+         */
         this.rtc = null;
     }
 

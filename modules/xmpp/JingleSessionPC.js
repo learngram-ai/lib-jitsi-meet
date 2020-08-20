@@ -304,6 +304,7 @@ export default class JingleSessionPC extends JingleSession {
      * @param {JingleSessionPCOptions} options  - a set of config options.
      */
     doInitialize(options) {
+        console.log("🔥 JingleSessionPC doInitialize start")
         this.failICE = Boolean(options.failICE);
         this.lasticecandidate = false;
         this.options = options;
