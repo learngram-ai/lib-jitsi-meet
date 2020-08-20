@@ -503,9 +503,13 @@ export default class RTC extends Listenable {
      * @return {TraceablePeerConnection}
      */
     createPeerConnection(signaling, iceConfig, isP2P, options) {
+        console.log("🔥 RTC createPeerConnection start")
         const pcConstraints = RTC.getPCConstraints(isP2P);
+        console.log("🔥 RTC createPeerConnection pcConstraints:",pcConstraints)
 
         if (typeof options.abtestSuspendVideo !== 'undefined') {
+            console.log("🔥 RTC createPeerConnection typeof options.abtestSuspendVideo !== undefined")
+
             RTCUtils.setSuspendVideo(pcConstraints, options.abtestSuspendVideo);
 
             Statistics.analytics.addPermanentProperties(
@@ -522,6 +526,7 @@ export default class RTC extends Listenable {
         }
 
         if (browser.supportsSdpSemantics()) {
+            console.log("🔥 RTC createPeerConnection browser.supportsSdpSemantics()")
             iceConfig.sdpSemantics = 'plan-b';
         }
 
@@ -532,6 +537,7 @@ export default class RTC extends Listenable {
 
         peerConnectionIdCounter = safeCounterIncrement(peerConnectionIdCounter);
 
+        console.log("🔥 RTC createPeerConnection TraceablePeerConnection start")
         const newConnection
             = new TraceablePeerConnection(
                 this,
@@ -539,9 +545,11 @@ export default class RTC extends Listenable {
                 signaling,
                 iceConfig, pcConstraints,
                 isP2P, options);
+        console.log("🔥 RTC createPeerConnection TraceablePeerConnection end")
 
         this.peerConnections.set(newConnection.id, newConnection);
 
+        console.log("🔥 RTC createPeerConnection end")
         return newConnection;
     }
 
