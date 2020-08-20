@@ -63,22 +63,22 @@ export default class JingleSession extends Listenable {
          */
         this.dripContainer = [];
 
-        /**
-         * The chat room instance associated with the session.
-         * @type {ChatRoom}
-         */
+        // /**
+        //  * The chat room instance associated with the session.
+        //  * @type {ChatRoom}
+        //  */
         this.room = null;
 
-        /**
-         * Jingle session state - uninitialized until {@link initialize} is
-         * called @type {JingleSessionState}
-         */
+        // /**
+        //  * Jingle session state - uninitialized until {@link initialize} is
+        //  * called @type {JingleSessionState}
+        //  */
         this.state = null;
 
-        /**
-         * The RTC service instance
-         * @type {RTC}
-         */
+        // /**
+        //  * The RTC service instance
+        //  * @type {RTC}
+        //  */
         this.rtc = null;
     }
 
@@ -125,8 +125,9 @@ export default class JingleSession extends Listenable {
         this.rtc = rtc;
         console.log("🔥 JingleSession initialize this.state = JingleSessionState.PENDING")
         this.state = JingleSessionState.PENDING;
-        console.log("🔥 JingleSession initialize end")
+        console.log("🔥 JingleSession initialize this.doInitialize(options);")
         this.doInitialize(options);
+        console.log("🔥 JingleSession initialize end")
     }
 
     /**
@@ -135,7 +136,7 @@ export default class JingleSession extends Listenable {
      * @param {Object} options - The options specific to the implementing class.
      * @protected
      */
-    doInitialize(options) { } // eslint-disable-line no-unused-vars, no-empty-function, max-len
+    doInitialize(options) { console.log("🔥 JingleSession doInitialize start end") } // eslint-disable-line no-unused-vars, no-empty-function, max-len
 
     /* eslint-disable no-unused-vars, no-empty-function */
 
