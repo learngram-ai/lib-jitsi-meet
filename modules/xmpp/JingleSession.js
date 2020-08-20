@@ -109,6 +109,7 @@ export default class JingleSession extends Listenable {
      * {@link #doInitialize} description for more details.
      */
     initialize(room, rtc, options) {
+        console.log("🔥 JingleSession initialize start")
         if (this.state !== null) {
             const errmsg
                 = `attempt to initiate on session ${this.sid}
