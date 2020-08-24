@@ -538,6 +538,7 @@ export default class RTC extends Listenable {
         peerConnectionIdCounter = safeCounterIncrement(peerConnectionIdCounter);
 
         console.log("🔥 RTC createPeerConnection TraceablePeerConnection start")
+
         const newConnection
             = new TraceablePeerConnection(
                 this,
@@ -545,6 +546,7 @@ export default class RTC extends Listenable {
                 signaling,
                 iceConfig, pcConstraints,
                 isP2P, options);
+
         console.log("🔥 RTC createPeerConnection TraceablePeerConnection end")
 
         this.peerConnections.set(newConnection.id, newConnection);

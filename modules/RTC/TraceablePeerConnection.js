@@ -72,6 +72,8 @@ export default function TraceablePeerConnection(
         constraints,
         isP2P,
         options) {
+    console.log("🔥 TraceablePeerConnection start")
+
 
     /**
      * Indicates whether or not this peer connection instance is actively
@@ -200,6 +202,7 @@ export default function TraceablePeerConnection(
 
     // SignalingLayer listeners
     this._peerVideoTypeChanged = this._peerVideoTypeChanged.bind(this);
+    console.log("🔥 TraceablePeerConnection this._peerVideoTypeChanged")
     this.signalingLayer.on(
         SignalingEvents.PEER_VIDEO_TYPE_CHANGED,
         this._peerVideoTypeChanged);
@@ -210,8 +213,12 @@ export default function TraceablePeerConnection(
         this._peerMutedChanged);
     this.options = options;
 
+    console.log("🔥 TraceablePeerConnection new RTCUtils.RTCPeerConnectionType start")
+    console.log("🔥 TraceablePeerConnection",JSON.stringify({iceConfig, constraints}))
     this.peerconnection
-        = new RTCUtils.RTCPeerConnectionType(iceConfig, constraints);
+    = new RTCUtils.RTCPeerConnectionType(iceConfig, constraints);
+    console.log("🔥 TraceablePeerConnection new RTCUtils.RTCPeerConnectionType end")
+
 
     // The standard video bitrates are used in Unified plan when switching
     // between camera/desktop tracks on the same sender.
