@@ -397,7 +397,7 @@ export default class BridgeChannel {
         const channel = this._channel;
 
         if (!this.isOpen()) {
-            logger.error('Bridge Channel send: no opened channel.');
+            // logger.error('Bridge Channel send: no opened channel.');
             throw new Error('No opened channel');
         }
 
